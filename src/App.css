@@ -43,7 +43,7 @@ body::after {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 0.6rem 1rem;
+  padding: 0 1rem 0.5rem; /* sin padding superior: el header queda pegado arriba */
   color: #fff;
   overflow: hidden;
 }
@@ -53,21 +53,34 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.3rem 0;
+  padding: 0; /* espacio mínimo entre el contenido y los bordes del header */
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   flex-shrink: 0;
 }
 .title {
-  font-size: 1.1rem;
+  font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+  font-size: 1.5rem;
+  font-weight: 700;
   text-align: center;
   flex: 1;
-  line-height: 1.3;
+  line-height: 1.25;
+  letter-spacing: 0.4px;
+  background: linear-gradient(135deg, #fde68a, #fbbf24, #f59e0b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 2px 10px rgba(251, 191, 36, 0.22));
+  padding: 0 0.6rem;
 }
 .logo {
-  height: 75px;
+  height: 90px;
   width: auto;
-  max-width: 160px;
+  max-width: 180px;
   object-fit: contain;
+}
+.logo-right {
+  height: 105px; /* el logo de la Dirección un poco más grande */
+  max-width: 200px;
 }
 
 /* LAYOUT DOS COLUMNAS */
@@ -76,7 +89,7 @@ body::after {
   display: grid;
   grid-template-columns: 1fr 1fr; /* 50/50; cambia a 1fr 1.2fr si quieres */
   gap: 1rem;
-  padding-top: 0.6rem;
+  padding-top: 0.4rem;
   min-height: 0; /* importante para que el grid no desborde */
 }
 
@@ -89,7 +102,29 @@ body::after {
   overflow: hidden;
 }
 
-/* Panel izquierdo */
+/* --- Zona de ruleta: crece para llenar el espacio disponible ---
+   .wheel-area es el contenedor elástico (flex:1).
+   .wheel-box es el cuadrado acotado que entrega exactamente a la rueda.
+   container-type en .wheel-area nos da cqw y cqh para calcular el lado
+   del cuadrado = min(ancho total, alto total) dentro del área disponible. */
+.wheel-area {
+  flex: 1;
+  min-height: 0;
+  container-type: size;   /* activa cqw / cqh */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wheel-box {
+  /* Cuadrado = el menor entre ancho y alto del área disponible.
+     Así la rueda crece tanto como puede sin desbordar. */
+  width: min(100cqw, 100cqh);
+  height: min(100cqw, 100cqh);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .mode-toggle {
   display: flex;
   gap: 0.4rem;
@@ -108,16 +143,11 @@ body::after {
   background: linear-gradient(135deg, #7c3aed, #db2777);
   border-color: transparent;
 }
-
-.wheel-box {
-  flex: 0 0 auto;
-  height: 280px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 0;
-  margin-bottom: 0.5rem;
+.mode-toggle button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
+
 .wheel-empty {
   opacity: 0.6;
   font-style: italic;
@@ -131,6 +161,7 @@ body::after {
 .left-actions {
   display: flex;
   gap: 0.4rem;
+  margin-top: auto; /* pegado al fondo, a la par de .print-actions */
 }
 .left-actions .btn {
   flex: 1;
@@ -221,6 +252,10 @@ body::after {
   cursor: pointer;
   font-size: 0.9rem;
 }
+.mini-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
 .eliminated .name {
   text-decoration: line-through;
   opacity: 0.5;
@@ -229,6 +264,13 @@ body::after {
   opacity: 0.5;
   font-style: italic;
   justify-content: center;
+}
+
+/* Resalta al ganador más reciente */
+.results-list li.newest {
+  background: rgba(251, 191, 36, 0.14);
+  border-left: 3px solid #fbbf24;
+  border-radius: 4px;
 }
 
 .print-actions {
@@ -317,13 +359,174 @@ body::after {
   }
 }
 
-/* Zona de impresión */
+/* BANNER flotante del último ganador (no bloquea la interfaz) */
+.winner-banner {
+  position: fixed;
+  top: 16%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 1rem 2.4rem;
+  border-radius: 14px;
+  background: linear-gradient(
+    135deg,
+    rgba(30, 27, 75, 0.97),
+    rgba(49, 46, 129, 0.97)
+  );
+  border: 1px solid rgba(251, 191, 36, 0.55);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+  animation: pop 0.3s ease;
+  pointer-events: none;
+  text-align: center;
+}
+.winner-banner-label {
+  font-size: 0.72rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #fbbf24;
+  opacity: 0.85;
+}
+.winner-banner-name {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.1;
+}
+.winner-banner-time {
+  font-size: 0.72rem;
+  opacity: 0.6;
+}
+
+/* Aviso de sorteo finalizado */
+.sorteo-done-card {
+  max-width: 420px;
+}
+.sorteo-done-card h2 {
+  color: #fbbf24;
+}
+.sorteo-done-text {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  margin: 0.5rem 0 1rem;
+  line-height: 1.4;
+}
+
+/* --- Documento de impresión (oculto, capturado por html2canvas) --- */
 .print-area {
   position: absolute;
   left: -9999px;
   top: 0;
   width: 800px;
-  background: #fff;
-  color: #000;
-  padding: 2rem;
+  background: #ffffff;
+  color: #1a1a2e;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+}
+.doc {
+  padding: 40px 48px;
+}
+.doc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding-bottom: 18px;
+  border-bottom: 3px solid #7c3aed;
+}
+.doc-logo {
+  height: 82px;
+  width: auto;
+  max-width: 150px;
+  object-fit: contain;
+}
+.doc-titles {
+  text-align: center;
+  flex: 1;
+}
+.doc-title-main {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0;
+  line-height: 1.2;
+}
+.doc-title-sub {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 5px 0 0;
+  letter-spacing: 0.3px;
+}
+.doc-doc-title {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #7c3aed;
+  margin: 26px 0 6px;
+  text-align: center;
+}
+.doc-meta {
+  text-align: center;
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 22px;
+}
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.doc-table thead th {
+  background: linear-gradient(135deg, #7c3aed, #db2777);
+  color: #fff;
+  text-align: left;
+  padding: 11px 14px;
+  font-size: 12px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+.doc-table tbody td {
+  padding: 9px 14px;
+  border-bottom: 1px solid #eef0f3;
+}
+.doc-table tbody tr:nth-child(even) {
+  background: #f8f7fb;
+}
+.doc-table tbody tr:last-child td {
+  border-bottom: none;
+}
+.doc-table td.num {
+  font-weight: 700;
+  color: #7c3aed;
+  width: 64px;
+}
+.doc-table td.name {
+  font-weight: 600;
+  color: #1a1a2e;
+}
+.doc-table td.state,
+.doc-table td.time {
+  color: #6b7280;
+  font-size: 13px;
+}
+.doc-table td.empty {
+  text-align: center;
+  color: #9ca3af;
+  font-style: italic;
+  padding: 22px;
+}
+.doc-footer {
+  margin-top: 26px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+  text-align: center;
+  font-size: 12px;
+  color: #6b7280;
 }
