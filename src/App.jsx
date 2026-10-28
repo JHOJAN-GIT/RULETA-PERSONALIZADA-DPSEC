@@ -488,8 +488,9 @@ function App() {
           <header className="doc-header">
             <img src={logoU} alt="" className="doc-logo" />
             <div className="doc-titles">
-              <h1 className="doc-title-main">Universidad Nacional del Centro del Perú</h1>
-              <p className="doc-title-sub">Dirección de Proyección Social y Extensión Cultural</p>
+              <p className="doc-title-l1">Universidad Nacional del Centro del Perú</p>
+              <p className="doc-title-l2">Vicerrectorado Académico</p>
+              <p className="doc-title-l3">Dirección de Proyección Social y Extensión Cultural</p>
             </div>
             <img src={logoDireccion} alt="" className="doc-logo" />
           </header>
@@ -533,8 +534,9 @@ function App() {
           <header className="doc-header">
             <img src={logoU} alt="" className="doc-logo" />
             <div className="doc-titles">
-              <h1 className="doc-title-main">Universidad Nacional del Centro del Perú</h1>
-              <p className="doc-title-sub">Dirección de Proyección Social y Extensión Cultural</p>
+              <p className="doc-title-l1">Universidad Nacional del Centro del Perú</p>
+              <p className="doc-title-l2">Vicerrectorado Académico</p>
+              <p className="doc-title-l3">Dirección de Proyección Social y Extensión Cultural</p>
             </div>
             <img src={logoDireccion} alt="" className="doc-logo" />
           </header>
