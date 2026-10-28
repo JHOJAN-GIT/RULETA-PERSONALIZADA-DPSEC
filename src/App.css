@@ -53,16 +53,24 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0; /* espacio mínimo entre el contenido y los bordes del header */
+  padding: 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   flex-shrink: 0;
+}
+/* Agrupa título institucional + subtítulo Festidanza */
+.header-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0; /* sin espacio entre título y subtítulo */
+  padding: 0 0.6rem;
 }
 .title {
   font-family: "Playfair Display", Georgia, "Times New Roman", serif;
   font-size: 1.5rem;
   font-weight: 700;
   text-align: center;
-  flex: 1;
   line-height: 1.25;
   letter-spacing: 0.4px;
   background: linear-gradient(135deg, #fde68a, #fbbf24, #f59e0b);
@@ -70,7 +78,38 @@ body::after {
   background-clip: text;
   color: transparent;
   filter: drop-shadow(0 2px 10px rgba(251, 191, 36, 0.22));
-  padding: 0 0.6rem;
+}
+/* Subtítulo Festidanza debajo del nombre institucional */
+.event-subtitle {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: 1.5px;
+  /* plata/blanco apagado con shimmer sutil */
+  background: linear-gradient(
+    90deg,
+    #cbd5e1 0%,
+    #f1f5f9 40%,
+    #94a3b8 70%,
+    #cbd5e1 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer-silver 6s linear infinite;
+  cursor: default;
+  margin-top: 0; /* pegado al título de arriba */
+  transition: letter-spacing 0.3s ease, filter 0.3s ease;
+}
+.event-subtitle:hover {
+  letter-spacing: 2.5px;
+  filter: drop-shadow(0 0 6px rgba(241, 245, 249, 0.5));
+}
+@keyframes shimmer-silver {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
 }
 .logo {
   height: 90px;
@@ -313,6 +352,77 @@ body::after {
   border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
+/* Botón "Detalles del evento" */
+.btn-event {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.45);
+}
+.btn-event:hover:not(:disabled) {
+  background: rgba(251, 191, 36, 0.15);
+}
+/* Botón cuando el evento ya está configurado */
+.btn-event-ok {
+  background: rgba(22, 163, 74, 0.18);
+  color: #86efac;
+  border: 1px solid rgba(134, 239, 172, 0.45);
+}
+.btn-event-ok:hover:not(:disabled) {
+  background: rgba(22, 163, 74, 0.28);
+}
+
+/* Modal detalles del evento */
+.event-modal {
+  text-align: left;
+  min-width: 340px;
+  max-width: 420px;
+}
+.event-modal h2 {
+  text-align: center;
+}
+.event-modal-desc {
+  font-size: 0.82rem;
+  opacity: 0.75;
+  margin: 0.5rem 0 1.2rem;
+  line-height: 1.4;
+  text-align: center;
+}
+.event-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 1rem;
+}
+.event-field label {
+  font-size: 0.8rem;
+  opacity: 0.85;
+  font-weight: 600;
+}
+.event-field input {
+  padding: 0.45rem 0.7rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  font-size: 0.9rem;
+}
+.event-field input:focus {
+  outline: none;
+  border-color: #fbbf24;
+}
+.event-error {
+  font-size: 0.75rem;
+  color: #f87171;
+}
+.event-modal-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+.event-modal-actions .btn {
+  flex: 1;
+}
+
 /* MODAL */
 .modal-backdrop {
   position: fixed;
@@ -423,7 +533,7 @@ body::after {
   top: 0;
   width: 800px;
   background: #ffffff;
-  color: #1a1a2e;
+  color: #111;
   font-family: "Segoe UI", Tahoma, sans-serif;
 }
 .doc {
@@ -434,8 +544,8 @@ body::after {
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  padding-bottom: 18px;
-  border-bottom: 3px solid #7c3aed;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #000; /* línea separadora negra */
 }
 .doc-logo {
   height: 82px;
@@ -449,84 +559,99 @@ body::after {
 }
 .doc-title-main {
   font-family: "Playfair Display", Georgia, serif;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
-  color: #1a1a2e;
+  color: #111;
   margin: 0;
   line-height: 1.2;
 }
 .doc-title-sub {
-  font-size: 13px;
-  color: #6b7280;
-  margin: 5px 0 0;
+  font-size: 12px;
+  color: #444;
+  margin: 4px 0 0;
   letter-spacing: 0.3px;
 }
+/* Título del documento: Festidanza 2026 — en negro normal */
 .doc-doc-title {
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: 26px;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  font-size: 20px;
   font-weight: 700;
-  color: #7c3aed;
-  margin: 26px 0 6px;
+  color: #111;
+  margin: 24px 0 4px;
   text-align: center;
+  letter-spacing: 0.5px;
 }
 .doc-meta {
   text-align: center;
-  font-size: 13px;
-  color: #6b7280;
-  margin-bottom: 22px;
+  font-size: 12px;
+  color: #555;
+  margin-bottom: 20px;
 }
 .doc-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  overflow: hidden;
+  /* font-size se define dinámicamente en el JSX si se necesita,
+     o se deja fijo y se controla con white-space/overflow */
+  font-size: 13px;
+  table-layout: fixed; /* columnas con ancho fijo: nombres no rompen fila */
 }
+/* Anchos de columna: N° con espacio suficiente, Hora fija, Nombre ocupa el resto */
+.doc-table colgroup col:nth-child(1) { width: 120px; }
+.doc-table colgroup col:nth-child(2) { width: auto; }
+.doc-table colgroup col:nth-child(3) { width: 185px; }
+
 .doc-table thead th {
-  background: linear-gradient(135deg, #7c3aed, #db2777);
+  background: #155724;
   color: #fff;
-  text-align: left;
-  padding: 11px 14px;
-  font-size: 12px;
-  letter-spacing: 0.6px;
+  text-align: center;
+  padding: 10px 12px;
+  font-size: 11px;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
+  white-space: normal;
+  word-break: break-word;
+  vertical-align: middle;
 }
 .doc-table tbody td {
-  padding: 9px 14px;
-  border-bottom: 1px solid #eef0f3;
+  padding: 8px 12px;
+  border-bottom: 1px solid #dde;
+  color: #111;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .doc-table tbody tr:nth-child(even) {
-  background: #f8f7fb;
+  background: #f0f9f1; /* verde muy claro en filas pares */
 }
 .doc-table tbody tr:last-child td {
   border-bottom: none;
 }
 .doc-table td.num {
   font-weight: 700;
-  color: #7c3aed;
-  width: 64px;
+  color: #155724;
+  text-align: center;
 }
 .doc-table td.name {
   font-weight: 600;
-  color: #1a1a2e;
+  color: #111;
 }
-.doc-table td.state,
-.doc-table td.time {
-  color: #6b7280;
-  font-size: 13px;
+.doc-table td.slot {
+  color: #333;
+  font-size: 12px;
 }
 .doc-table td.empty {
   text-align: center;
-  color: #9ca3af;
+  color: #888;
   font-style: italic;
-  padding: 22px;
+  padding: 20px;
+  white-space: normal;
 }
 .doc-footer {
-  margin-top: 26px;
-  padding-top: 12px;
-  border-top: 1px solid #e5e7eb;
+  margin-top: 22px;
+  padding-top: 10px;
+  border-top: 1px solid #ccc;
   text-align: center;
-  font-size: 12px;
-  color: #6b7280;
+  font-size: 11px;
+  color: #555;
 }
